@@ -1,6 +1,7 @@
 package com.test.featureswitches.controller;
 
 import com.test.featureswitches.entity.Feature;
+import com.test.featureswitches.entity.RestResponse;
 import com.test.featureswitches.service.FeatureService;
 import java.util.HashMap;
 import java.util.Map;
@@ -13,6 +14,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PostMapping;
 import jakarta.validation.Valid;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 
 
@@ -34,12 +38,14 @@ public class FeatureController {
     	Feature feature = featureService.findByFeatureEmail(featureName, email);
     	
     	if (feature != null) {
-        	Map<String,Object> map = new HashMap<String,Object>();
-            map.put("canAccess", feature.getEnable());
+        	Map<String,Object> data = new HashMap<String,Object>();
+        	data.put("canAccess", feature.getEnable());
             
-            return ResponseEntity.ok(map);
+            RestResponse response = new RestResponse(HttpStatus.OK, false, data, null);
+            return ResponseEntity.ok(response);
     	} else {
-    		return ResponseEntity.notFound().build();
+    		RestResponse response = new RestResponse(HttpStatus.NOT_FOUND, true, null, "Record not found");
+    		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     	}
     }
     
@@ -53,16 +59,25 @@ public class FeatureController {
     	try {
         	Feature dbFeature = featureService.findByFeatureEmail(newFeature.getFeatureName(), newFeature.getEmail());
         	
+        	
+        	Map<String,Object> data = new HashMap<String,Object>();
         	if (dbFeature != null) {
         		dbFeature.setEnable(newFeature.getEnable());
-    	        featureService.save(dbFeature);
+        		Feature savedFeature = featureService.save(dbFeature);
+    	        
+        		data.put("message", "Successfully updated existing feature access (ID: " + savedFeature.getID() + ")");
         	} else {
-        		featureService.save(newFeature);
+        		Feature savedFeature = featureService.save(newFeature);
+        		
+        		data.put("message", "Successfully added new feature access (ID: " + savedFeature.getID() + ")");
         	}
+            
+        	RestResponse response = new RestResponse(HttpStatus.OK, false, data, null);
+        	return ResponseEntity.ok(response);
         	
-        	return ResponseEntity.ok(null);
     	} catch (Exception e) {
-    		return ResponseEntity.status(304).body(null);
+    		RestResponse response = new RestResponse(HttpStatus.NOT_MODIFIED, true, null, "No change in database");
+    		return ResponseEntity.status(304).body(response);
     	}
     }
 

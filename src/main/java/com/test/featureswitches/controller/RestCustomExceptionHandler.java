@@ -2,8 +2,8 @@ package com.test.featureswitches.controller;
 
 import java.util.List;
 import java.util.stream.Collectors;
-
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -12,8 +12,8 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+import com.test.featureswitches.entity.RestResponse;
 
-import com.test.featureswitches.entity.ExceptionResponse;
 
 
 @RestControllerAdvice
@@ -24,7 +24,8 @@ public class RestCustomExceptionHandler extends ResponseEntityExceptionHandler {
 	 */
 	@Override
     protected ResponseEntity<Object> handleMissingServletRequestParameter(MissingServletRequestParameterException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
-        return ResponseEntity.badRequest().body(String.format("Missing parameter with name: %s", ex.getParameterName()));
+		RestResponse excRes = new RestResponse(HttpStatus.BAD_REQUEST, true, null, String.format("Missing parameter with name: %s", ex.getParameterName()));
+		return ResponseEntity.badRequest().body(excRes);
     }
 	
 	/**
@@ -36,7 +37,7 @@ public class RestCustomExceptionHandler extends ResponseEntityExceptionHandler {
 		
 		String errMsg = fieldsErr.stream().map(x -> x.getDefaultMessage()).collect(Collectors.joining(", "));
 		
-		ExceptionResponse excRes = new ExceptionResponse(errMsg);
+		RestResponse excRes = new RestResponse(HttpStatus.BAD_REQUEST, true, null, errMsg);
 		return this.createResponseEntity(excRes, headers, status, request);
 	}
 }
