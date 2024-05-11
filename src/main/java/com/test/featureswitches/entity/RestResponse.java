@@ -13,7 +13,6 @@ public class RestResponse {
     private String error;
     private Map<String, Object> data;
 
-    
     public RestResponse() {
 
     }
@@ -32,7 +31,7 @@ public class RestResponse {
     public void setStatusCode(HttpStatus statusCode) {
         this.statusCode = statusCode;
     }
-    
+
     public boolean getHasError() {
         return hasError;
     }
@@ -40,7 +39,7 @@ public class RestResponse {
     public void setHasError(boolean hasError) {
         this.hasError = hasError;
     }
-    
+
     public Map<String, Object> getData() {
         return data;
     }
@@ -48,7 +47,7 @@ public class RestResponse {
     public void setData(Map<String, Object> data) {
         this.data = data;
     }
-    
+
     public String getError() {
         return error;
     }
