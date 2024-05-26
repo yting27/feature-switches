@@ -11,5 +11,12 @@ pipeline {
                 echo "Env: ${env.CC}"
             }
         }
+
+        stage('Example Stage2') {
+            steps {
+                echo "Stage 2 here..."
+            }
+        }
+
     }
 }
