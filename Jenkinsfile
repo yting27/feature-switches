@@ -16,8 +16,8 @@ pipeline {
     stages {
         stage('Example Stage1') {
             steps {
-                // bat 'mvn --version'
-                echo "Env: ${env.CC}"
+                bat 'mvn --version'
+                bat 'echo "Env: ${env.CC}"'
             }
         }
     }
